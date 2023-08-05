@@ -36,7 +36,7 @@ var clientecrm_routes = require('./routes/clientecrm');
 var descuento_routes = require('./routes/descuento');
 
 
-mongoose.connect('mongodb://137.184.189.159:27017/tienda',{useUnifiedTopology: true, useNewUrlParser: true}, (err,res)=>{
+mongoose.connect('mongodb://127.0.0.1:27017/tienda',{useUnifiedTopology: true, useNewUrlParser: true}, (err,res)=>{
     
     
     if(err){  
