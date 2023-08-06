@@ -7,9 +7,11 @@ var port = process.env.PORT || 4201;
 var app = express();
 
 var server = require('http').createServer(app);
-var io = require('socket.io')(server,{
-    cors: {origin : '*'}
-});
+const io = require('socket.io')(server, {
+    cors: {
+      origin: ['http://127.0.0.1:4201', 'https://megaofertasperu.com'],
+    },
+  });
 
 
 io.on('connection',function(socket){
