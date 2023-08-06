@@ -3,6 +3,7 @@
 var express = require('express');
 var bodyparser = require('body-parser');
 var mongoose = require('mongoose');
+const cors = require('cors');
 var port = process.env.PORT || 4201;
 var app = express();
 
@@ -37,7 +38,7 @@ var colaborador_routes = require('./routes/colaborador');
 var clientecrm_routes = require('./routes/clientecrm');
 var descuento_routes = require('./routes/descuento');
 
-
+// mongoose.connect('mongodb://137.184.189.159:27017/tienda',{useUnifiedTopology: true, useNewUrlParser: true}, (err,res)=>{
 mongoose.connect('mongodb://127.0.0.1:27017/tienda',{useUnifiedTopology: true, useNewUrlParser: true}, (err,res)=>{
     
     
@@ -56,6 +57,12 @@ mongoose.connect('mongodb://127.0.0.1:27017/tienda',{useUnifiedTopology: true, u
 app.use(bodyparser.urlencoded({limit: '50mb',extended:true}));
 app.use(bodyparser.json({limit: '50mb', extended: true}));
 
+
+app.use(cors({
+    origin: ['http://127.0.0.1:4201', 'https://megaofertasperu.com'],
+    allowedHeaders: ['Authorization', 'X-API-KEY', 'Origin', 'X-Requested-With', 'Content-Type', 'Access-Control-Allow-Request-Method'],
+    methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
+  }));
 
 app.use((req,res,next)=>{
     res.header('Access-Control-Allow-Origin','*'); 
