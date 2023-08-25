@@ -10,7 +10,7 @@ var app = express();
 var server = require('http').createServer(app);
 const io = require('socket.io')(server, {
     cors: {
-      origin: ['http://127.0.0.1:4201', 'https://megaofertasperu.com'],
+      origin: ['https://ecomallki.com'],
     },
   });
 
@@ -59,7 +59,7 @@ app.use(bodyparser.json({limit: '50mb', extended: true}));
 
 
 app.use(cors({
-    origin: ['http://127.0.0.1:4201', 'https://megaofertasperu.com'],
+    origin: ['https://ecomallki.com'],
     allowedHeaders: ['Authorization', 'X-API-KEY', 'Origin', 'X-Requested-With', 'Content-Type', 'Access-Control-Allow-Request-Method'],
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
   }));
