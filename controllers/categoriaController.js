@@ -5,7 +5,7 @@ var path = require('path');
 
 const crear_categoria_admin = async function(req,res){
     if(req.user){
-        console.log('aqui creo la tabla en bd');
+        //console.log('aqui creo la tabla en bd');
         await Categoria.create({
             categorias:[],
             titulo: 'Ecomalki',
@@ -26,8 +26,8 @@ const obtener_categoria_admin = async function(req,res){
     // if(req.user){
         // 64590b09079fdd1b9cd967f5
         let reg = await Categoria.findById({_id:"64590f196002a8208020b554"});
-        // console.log('aqui estoy obteniendo categorias');
-        // console.log(reg);
+        // //console.log('aqui estoy obteniendo categorias');
+        // //console.log(reg);
         res.status(200).send({data:reg});
        
     // }else{
@@ -48,8 +48,8 @@ const actualiza_categoria_admin = async function(req,res){
             var name = img_path.split('/');
             var logo_name = name[2];
 
-            console.log('aqui reviso logo_name');
-            console.log(logo_name);
+            //console.log('aqui reviso logo_name');
+            //console.log(logo_name);
             //actualizo los datos con la nueva imagen
             let reg = await Categoria.findByIdAndUpdate({_id:"64590f196002a8208020b554"},{
                 categorias: JSON.parse(data.categorias),
@@ -71,7 +71,7 @@ const actualiza_categoria_admin = async function(req,res){
             
         }else{
             //cuando no hay cambios en el logo
-            console.log('no hay imagen');
+            //console.log('no hay imagen');
             let reg = await Categoria.findByIdAndUpdate({_id:"64590f196002a8208020b554"},{
                 categorias:data.categorias,
                 titulo: data.titulo,
@@ -97,15 +97,15 @@ const subir_portada_categoria = async function(req,res){
         let id = req.params['id'];
         let data = req.body;
         
-        console.log(id);
-        console.log(data);
-        console.log(req);
+        //console.log(id);
+        //console.log(data);
+        //console.log(req);
         var img_path = req.files.portada.path;
-        console.log(img_path);
+        //console.log(img_path);
         var name = img_path.split('/');
-        console.log(name);
+        //console.log(name);
         var imagen_name = name[2];
-        console.log(imagen_name );
+        //console.log(imagen_name );
     
                 let reg =await Categoria.findByIdAndUpdate({_id:id},{ $push: {categorias:{
                     titulo: data.titulo,
@@ -124,8 +124,8 @@ const subir_portada_categoria = async function(req,res){
 const obtener_logo = async function(req,res){
     var img = req.params['img'];
 
-    console.log('en el controlador al optener el logo');
-    console.log(img);
+    //console.log('en el controlador al optener el logo');
+    //console.log(img);
     
     fs.stat('./uploads/configuraciones/'+img, function(err){
         if(!err){
@@ -140,8 +140,8 @@ const obtener_logo = async function(req,res){
 
 const listar_categorias_publico = async (req,res)=>{
     let reg = await Categoria.findById({_id:'64590f196002a8208020b554'}).populate('productos').populate('_id');
-    // console.log('aqui estoy obteniendo categorias');
-    // console.log(reg.categorias);
+    // //console.log('aqui estoy obteniendo categorias');
+    // //console.log(reg.categorias);
     res.status(200).send({data:reg.categorias});
 
    
@@ -158,8 +158,8 @@ const listar_categorias_publico = async (req,res)=>{
  
 // }
 
-// console.log('aqui estoy obteniendo categorias');
-// console.log(reg);
+// //console.log('aqui estoy obteniendo categorias');
+// //console.log(reg);
 const listar_logo_categoria_publico = async (req, res) => {
     try {
       // Realizar la consulta a la base de datos
@@ -187,12 +187,12 @@ const listar_logo_categoria_publico = async (req, res) => {
 
 const listar_id_categorias_publico = async (req,res)=>{
     var id = req.params['id'];
-    // console.log('aqui estoy obteniendo id');
-    // console.log(id);
+    // //console.log('aqui estoy obteniendo id');
+    // //console.log(id);
 
     let reg = await Categoria.find({categorias:{id} });
-    // console.log('aqui estoy obteniendo categorias');
-    // console.log(reg);
+    // //console.log('aqui estoy obteniendo categorias');
+    // //console.log(reg);
     res.status(200).send({data:reg});
 
    

@@ -74,7 +74,7 @@ const registro_cliente = async function(req,res){
     var clientes_arr = [];
 
     clientes_arr = await Cliente.find({email:data.email});
-    // console.log(data);
+    // //console.log(data);
     if(clientes_arr.length == 0){
         if(data.password){
             bcrypt.hash(data.password,null,null, async function(err,hash){
@@ -156,9 +156,9 @@ const actualizar_perfil_cliente_guest = async function(req,res){
         var data = req.body;
 
         if(data.password){
-            // console.log('Con contraseña');
+            // //console.log('Con contraseña');
             bcrypt.hash(data.password,null,null, async function(err,hash){
-                // console.log(hash);
+                // //console.log(hash);
                 var reg = await Cliente.findByIdAndUpdate({_id:id},{
                     nombres: data.nombres,
                     apellidos: data.apellidos,
@@ -171,7 +171,7 @@ const actualizar_perfil_cliente_guest = async function(req,res){
             });
             
         }else{
-            // console.log('Sin contraseña');
+            // //console.log('Sin contraseña');
             var reg = await Cliente.findByIdAndUpdate({_id:id},{
                 nombres: data.nombres,
                 apellidos: data.apellidos,
@@ -249,8 +249,8 @@ const eliminar_direccion_cliente = async function(req,res){
 //---METODOS PUBLICOS----------------------------------------------------
 const listar_productos_categoria_publico = async function(req,res){
     var categoria = req.params['filtro'];
-    // console.log('categoria en el controlador listar_productos_categoria_publico');
-    // console.log(categoria);
+    // //console.log('categoria en el controlador listar_productos_categoria_publico');
+    // //console.log(categoria);
     let reg = await Producto.find({categoria:categoria}).populate('categorias').populate('_id');
    
     res.status(200).send({data: reg});
@@ -262,8 +262,8 @@ const listar_productos_publico = async function(req,res){
     var filtro = req.params['filtro'];
 
     let reg = await Producto.find({titulo: new RegExp(filtro, 'i'), estado:'Publicado'}).sort({createdAt:-1});
-    // console.log('lista de productos publicos en el reg');
-    // console.log(reg);
+    // //console.log('lista de productos publicos en el reg');
+    // //console.log(reg);
     
     res.status(200).send({data: reg});
 
@@ -408,13 +408,13 @@ const enviar_email_pedido_compra = async function(venta){
           
             transporter.sendMail(mailOptions, function(error, info){
                 if (!error) {
-                    console.log('Email sent: ' + info.response);
+                    //console.log('Email sent: ' + info.response);
                 }
             });
         
         });
     } catch (error) {
-        console.log(error);
+        //console.log(error);
     }
 } 
 
@@ -429,7 +429,7 @@ const obtener_detalles_ordenes_cliente  = async function(req,res){
             res.status(200).send({data:venta,detalles:detalles});
 
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             res.status(200).send({data:undefined});
         }
             
@@ -485,7 +485,7 @@ const comprobar_carrito_cliente = async function(req,res){
                 res.status(200).send({venta:false,message:'Stock insuficiente para ' + producto_sl});
             }
         } catch (error) {
-            console.log(error);
+            //console.log(error);
         }
     }else{
         res.status(500).send({message: 'NoAccess'});
@@ -608,21 +608,21 @@ const enviar_orden_compra = async function(venta){
           
             transporter.sendMail(mailOptions, function(error, info){
                 if (!error) {
-                    console.log('Email sent: ' + info.response);
+                    //console.log('Email sent: ' + info.response);
                 }
             });
         
         });
     } catch (error) {
-        console.log(error);
+        //console.log(error);
     }
 } 
 
 const obtener_cliente_admin = async function(req,res){
-    // console.log('aqui entro al controlador');
+    // //console.log('aqui entro al controlador');
     if(req.user){
         
-            // console.log('aqui entro al admin en el constrolador');
+            // //console.log('aqui entro al admin en el constrolador');
 
             var id = req.params['id'];
             

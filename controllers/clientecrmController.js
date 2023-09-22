@@ -17,8 +17,8 @@ var path = require('path');
 const registro_cliente_crm_admin = async function(req,res){
     if(req.user){
         let data = req.body;
-        console.log('data');
-        console.log(data);
+        //console.log('data');
+        //console.log(data);
         try {
 
             var clientescrm = await Clientecrm.find({email:data.email});
@@ -40,7 +40,7 @@ const registro_cliente_crm_admin = async function(req,res){
             });
             
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             res.status(200).send({data:undefined,message:'Verifique los campos del formulario.'});
         }
     }else{
@@ -65,7 +65,7 @@ const validar_correo_verificacion = async function(req,res){
             });
             res.status(200).send({data:true});
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             return res.status(200).send({message:'El correo de verificación expiró',data:undefined});
         }
     }
@@ -289,7 +289,7 @@ const enviar_correo_verificacion = async function(email){
       
         transporter.sendMail(mailOptions, function(error, info){
             if (!error) {
-                console.log('Email sent: ' + info.response);
+                //console.log('Email sent: ' + info.response);
             }
         });
     

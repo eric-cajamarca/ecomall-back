@@ -7,7 +7,7 @@ try {
     if(req.user){
          
             let data = req.body;
-            console.log(data);
+            //console.log(data);
             
             var img_path = req.files.banner.path;
             var name = img_path.split('/');

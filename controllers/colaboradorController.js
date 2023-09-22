@@ -3,7 +3,7 @@ var bcrypt = require('bcrypt-nodejs');
 var jwt = require('../helpers/jwt');
 
 const registro_colaborador_admin = async function(req,res){
-    console.log(req.user);
+    //console.log(req.user);
     if(req.user){
         let data  = req.body;
 
@@ -64,8 +64,8 @@ const login_admin_colaborador = async function(req,res){
 }
 
 const listar_colaboradores_admin = async function(req,res){
-    console.log('req.user');
-    console.log(req.user);
+    //console.log('req.user');
+    //console.log(req.user);
     if(req.user){
 
         if(req.user.rol=='Administrador'){
@@ -127,19 +127,47 @@ const editar_colaborador_admin = async function(req,res){
         let id = req.params['id'];
         let data = req.body;
         
-        let colaborador = await Colaborador.findByIdAndUpdate({_id:id},{
-            nombres: data.nombres,
-            apellidos: data.apellidos,
-            fullnames: data.nombres + '' +data.apellidos,
-            genero: data.genero,
-            email: data.email,
-            telefono: data.telefono,
-            n_doc: data.n_doc,
-            pais: data.pais,
-            rol: data.rol,
-        });
+        if(data.password){
+            // //console.log('Con contraseña');
+            bcrypt.hash(data.password,null,null, async function(err,hash){
+                // //console.log(hash);
+            
+                let colaborador = await Colaborador.findByIdAndUpdate({_id:id},{
+                    nombres: data.nombres,
+                    apellidos: data.apellidos,
+                    fullnames: data.nombres + '' +data.apellidos,
+                    genero: data.genero,
+                    email: data.email,
+                    telefono: data.telefono,
+                    n_doc: data.n_doc,
+                    pais: data.pais,
+                    rol: data.rol,
+                    password: hash,
+                });
+        
+                res.status(200).send({data:colaborador});
+            });
+            
+        }else{
+            // //console.log('Sin contraseña');
+            let colaborador = await Colaborador.findByIdAndUpdate({_id:id},{
+                nombres: data.nombres,
+                apellidos: data.apellidos,
+                fullnames: data.nombres + '' +data.apellidos,
+                genero: data.genero,
+                email: data.email,
+                telefono: data.telefono,
+                n_doc: data.n_doc,
+                pais: data.pais,
+                rol: data.rol,
+            });
+    
+            res.status(200).send({data:colaborador});
+        }
 
-        res.status(200).send({data:colaborador});
+
+
+        
     }else{
         res.status(403).send({data:undefined,message:'NoToken'});
     }

@@ -144,7 +144,7 @@ const listar_variedades_productos_admin = async function(req,res){
 const obtener_producto_admin = async function(req,res){
     if(req.user){
         var id = req.params['id'];
-        console.log('aqui entro a obtener_producto_admin');
+        //console.log('aqui entro a obtener_producto_admin');
         try {
             var reg = await Producto.findById({_id:id});
             res.status(200).send({data:reg});
@@ -158,13 +158,13 @@ const obtener_producto_admin = async function(req,res){
 
 // const listar_usuario_admin = async function(req,res){
 //     if(req.user){
-//         console.log('aqui imprimo el id del user');    
-//         console.log(req.user);
+//         //console.log('aqui imprimo el id del user');    
+//         //console.log(req.user);
 
 //         var id = req.params['id'];
 
-//         console.log('aqui imprimo el id del admin');    
-//         console.log(id);
+//         //console.log('aqui imprimo el id del admin');    
+//         //console.log(id);
         
 //         var reg = await Inventario.find({admin: id}).populate('admin').sort({createdAt:-1});
 //         res.status(200).send({data:reg});
@@ -187,7 +187,7 @@ const listar_etiquetas_producto_admin = async function(req,res){
 const eliminar_etiqueta_producto_admin = async function(req,res){
     if(req.user){
         var id = req.params['id'];
-        // console.log(id);
+        // //console.log(id);
         let reg = await Producto_etiqueta.findByIdAndRemove({_id:id});
         res.status(200).send({data:reg});
         
@@ -297,7 +297,7 @@ const actualizar_producto_variedades_admin = async function(req,res){
         let id = req.params['id'];
         let data = req.body;
 
-        console.log(data.titulo_variedad);
+        //console.log(data.titulo_variedad);
         let reg = await Producto.findByIdAndUpdate({_id:id},{
             titulo_variedad: data.titulo_variedad,
         });
@@ -323,7 +323,7 @@ const agregar_nueva_variedad_admin = async function(req,res){
     if(req.user){
         var data = req.body;
 
-        console.log(data);
+        //console.log(data);
         let reg = await Variedad.create(data);
 
         res.status(200).send({data:reg});
@@ -347,19 +347,25 @@ const agregar_nueva_variedad_admin = async function(req,res){
 // }
 const listar_inventario_producto_admin = async function(req,res){
     if(req.user){
+        //console.log('req.params');
+        //console.log(req.params);
         var id = req.params['id'];
         
-        console.log('aqui imprimo el id');
-        console.log(id);
+        //console.log('aqui imprimo el id');
+        //console.log(id);
 
         //aqui extraigo las colecciones de variedad y admin con populate
         var reg = await Inventario.find({producto: id})
         .populate('variedad').sort({createdAt:-1})
-        .populate('admin');
+        .populate('colaborador');
+
+        // var reg = await Inventario.find({producto: id})
+        // .populate('variedad').sort({createdAt:-1})
+        // .populate('admin');
 
         // var usuarioAdmin = await Inventario.find({producto: id}).populate('admin').sort({createdAt:-1});
-        console.log('aqui imprimo el usuario admin');
-        console.log(reg);
+        //console.log('aqui imprimo el usuario admin');
+        //console.log(reg);
         res.status(200).send({data:reg});
         
     }else{
@@ -367,49 +373,117 @@ const listar_inventario_producto_admin = async function(req,res){
     }
 }
 
-const eliminar_inventario_producto_admin = async function(req,res){
-    if(req.user){
+// const eliminar_inventario_producto_admin = async function(req,res){
+//     if(req.user){
         
-        //OBTENER ID DEL INVENTARIO
-        var id = req.params['id'];
+//         //OBTENER ID DEL INVENTARIO
+//         var id = req.params['id'];
 
-        //ELIMINAR INVENTARIO
-        let reg = await Inventario.findByIdAndRemove({_id:id});
+//         //ELIMINAR INVENTARIO
+//         let reg = await Inventario.findByIdAndRemove({_id:id});
         
-        //OBTENER EL REGISTRO DE PRODUCTO
-        let prod = await Producto.findById({_id:reg.producto});
+//         //OBTENER EL REGISTRO DE PRODUCTO
+//         let prod = await Producto.findById({_id:reg.producto});
 
-        //CALCULAR EL NUEVO STOCK
-        let nuevo_stock = parseInt(prod.stock) - parseInt(reg.cantidad);
+//         //CALCULAR EL NUEVO STOCK
+//         let nuevo_stock = parseInt(prod.stock) - parseInt(reg.cantidad);
+//         //console.log('a qui vero el nuevo_stock');
+//         //console.log(nuevo_stock);
 
-        //ACTUALICACION DEL NUEVO STOCK AL PRODUCTO
-        let producto = await Producto.findByIdAndUpdate({_id:reg.producto},{
-        stock: nuevo_stock
-        })
+//         let producto;
 
-           res.status(200).send({data:producto});
+//         if(nuevo_stock=== 0){
+//             producto = await Producto.findByIdAndUpdate({_id:reg.producto},{
+//                 stock: 0});
+//         }else{
+//             //ACTUALICACION DEL NUEVO STOCK AL PRODUCTO
+//             producto = await Producto.findByIdAndUpdate({_id:reg.producto},{stock: nuevo_stock});
+//         }
+
+        
+
+//            res.status(200).send({data:producto});
             
         
-    }else{
-        res.status(500).send({message: 'NoAccess'});
+//     }else{
+//         res.status(500).send({message: 'NoAccess'});
+//     }
+// }
+
+const eliminar_inventario_producto_admin = async function(req, res) {
+    if (req.user) {
+        // OBTENER ID DEL INVENTARIO
+        var id = req.params['id'];
+
+        try {
+            // ELIMINAR INVENTARIO
+            let reg = await Inventario.findByIdAndRemove({ _id: id });
+
+           
+
+            // OBTENER EL REGISTRO DE LA VARIEDAD
+            let varied = await Variedad.findById({ _id: reg.variedad });
+
+            //CALCULAR EL NUEVO STOCK
+            let nuevo_stock_variedad = parseInt(varied.stock) - parseInt(reg.cantidad);
+            //console.log('a qui vero el nuevo_stock de variedad');
+            //console.log(nuevo_stock_variedad);
+
+            //Actualiza el stock de la variedad
+            await Variedad.findByIdAndUpdate(
+                { _id: varied._id },
+                { stock: nuevo_stock_variedad }
+            );
+
+            // OBTENER EL REGISTRO DE PRODUCTO
+             let prod = await Producto.findById({ _id: reg.producto });
+
+            // Encuentra todos los registros de inventario para ese producto
+            const inventarios = await Inventario.find({ producto: prod._id });
+
+            // Calcula la cantidad total sumando todas las cantidades en inventario
+            const cantidadTotal = inventarios.reduce((total, inventario) => {
+                return total + inventario.cantidad;
+            }, 0);
+
+            //console.log('Cantidad total en inventario:', cantidadTotal);
+
+            // Actualiza el stock del producto
+            await Producto.findByIdAndUpdate(
+                { _id: prod._id },
+                { stock: cantidadTotal }
+            );
+
+            
+
+            res.status(200).send({ message: 'Inventario eliminado y stock actualizado.' });
+        } catch (error) {
+            console.error('Error al eliminar inventario:', error);
+            res.status(500).send({ message: 'Error al eliminar inventario.' });
+        }
+    } else {
+        res.status(500).send({ message: 'NoAccess' });
     }
 }
+
 
 const registro_inventario_producto_admin = async function(req,res){
     
     if(req.user){
         let data = req.body;
+        //console.log('registro inventario producto admin');
+        //console.log(data);
 
         let reg = await Inventario.create(data);
-        console.log(reg);
+        //console.log(reg);
 
         //OBTENER EL REGISTRO DE PRODUCTO
         let prod = await Producto.findById({_id:reg.producto});
-        console.log(prod);
+        //console.log(prod);
 
 
         let varie = await Variedad.findById({_id:reg.variedad});
-        console.log(varie);
+        //console.log(varie);
 
 
         //CALCULAR EL NUEVO STOCK        
@@ -468,11 +542,11 @@ const eliminar_imagen_galeria_admin = async function(req,res){
 }
 
 const verificar_token = async function(req,res){
-    console.log(req.user);
+    //console.log(req.user);
     if(req.user){
         res.status(200).send({data:req.user});
     }else{
-        console.log(2);
+        //console.log(2);
         res.status(500).send({message: 'NoAccess'});
     } 
 }
@@ -482,8 +556,8 @@ const cambiar_vs_producto_admin = async function(req,res){
         var id = req.params['id'];
         var estado = req.params['estado'];
 
-        // console.log('aqui imprimo el estado');
-        // console.log(estado);
+        // //console.log('aqui imprimo el estado');
+        // //console.log(estado);
 
         try {
             if(estado == 'Edicion'){
@@ -508,9 +582,9 @@ const cambiar_vs_reviews_admin = async function(req,res){
         var id = req.params['id'];
         var estado = req.params['estado'];
 
-        console.log('aqui imprimo el estado');
-        console.log(estado);
-        console.log(id);
+        //console.log('aqui imprimo el estado');
+        //console.log(estado);
+        //console.log(id);
 
         try {
             if(estado == 'Activo'){
@@ -553,6 +627,9 @@ const pedido_compra_cliente = async function(req,res){
     if(req.user){
         try {
             var data = req.body;
+            //console.log('pedido_compra_cliente data');
+            //console.log(data);
+
             var detalles = data.detalles;
             let access = false;
             let producto_sl = '';
@@ -574,13 +651,18 @@ const pedido_compra_cliente = async function(req,res){
                     await Dventa.create(element);
                     await Carrito.remove({cliente:data.cliente});
                 }
-                enviar_email_pedido_compra(venta._id);
+                if(data.metodo_pago != 'Pago y recojo en tienda'){
+                    enviar_email_pedido_compra(venta._id);
+                }else{
+                    enviar_email_pedido_compra_RETienda(venta._id);
+                }
+                
                 res.status(200).send({venta:venta});
             }else{
                 res.status(200).send({venta:undefined,message:'Stock insuficiente para ' + producto_sl});
             }
         } catch (error) {
-            console.log(error);
+            //console.log(error);
         }
 
         
@@ -634,13 +716,67 @@ const enviar_email_pedido_compra = async function(venta){
           
             transporter.sendMail(mailOptions, function(error, info){
                 if (!error) {
-                    console.log('Email sent: ' + info.response);
+                    //console.log('Email sent: ' + info.response);
                 }
             });
         
         });
     } catch (error) {
-        console.log(error);
+        //console.log(error);
+    }
+} 
+
+const enviar_email_pedido_compra_RETienda = async function(venta){
+    try {
+        var readHTMLFile = function(path, callback) {
+            fs.readFile(path, {encoding: 'utf-8'}, function (err, html) {
+                if (err) {
+                    throw err;
+                    callback(err);
+                }
+                else {
+                    callback(null, html);
+                }
+            });
+        };
+    
+        var transporter = nodemailer.createTransport(smtpTransport({
+            service: 'gmail',
+            host: 'smtp.gmail.com',
+            auth: {
+                user: 'ventasecomallki@gmail.com',
+                pass: 'oknserherndzkrfy'
+            }
+        }));
+    
+     
+        var orden = await Venta.findById({_id:venta}).populate('cliente').populate('direccion');
+        var dventa = await Dventa.find({venta:venta}).populate('producto').populate('variedad');
+    
+    
+        readHTMLFile(process.cwd() + '/mails/email_pagoyrecojoentienda.html', (err, html)=>{
+                                
+            let rest_html = ejs.render(html, {orden: orden, dventa:dventa});
+    
+            var template = handlebars.compile(rest_html);
+            var htmlToSend = template({op:true});
+    
+            var mailOptions = {
+                from: 'ventasecomallki@gmail.com',
+                to: orden.cliente.email,
+                subject: 'Gracias por tu orden, EcoMalki.',
+                html: htmlToSend
+            };
+          
+            transporter.sendMail(mailOptions, function(error, info){
+                if (!error) {
+                    //console.log('Email sent: ' + info.response);
+                }
+            });
+        
+        });
+    } catch (error) {
+        //console.log(error);
     }
 } 
 
@@ -669,7 +805,7 @@ const obtener_detalles_ordenes_cliente  = async function(req,res){
             res.status(200).send({data:venta,detalles:detalles});
 
         } catch (error) {
-            console.log(error);
+            //console.log(error);
             res.status(200).send({data:undefined});
         }
         
@@ -809,13 +945,13 @@ const mail_confirmar_envio = async function(venta){
           
             transporter.sendMail(mailOptions, function(error, info){
                 if (!error) {
-                    console.log('Email sent: ' + info.response);
+                    //console.log('Email sent: ' + info.response);
                 }
             });
         
         });
     } catch (error) {
-        console.log(error);
+        //console.log(error);
     }
 } 
 
@@ -827,7 +963,7 @@ const registro_compra_manual_cliente = async function(req,res){
 
         data.estado = 'Procesando';
         
-        console.log(data);
+        //console.log(data);
 
         let venta = await Venta.create(data);
 
@@ -905,13 +1041,13 @@ const enviar_orden_compra = async function(venta){
           
             transporter.sendMail(mailOptions, function(error, info){
                 if (!error) {
-                    console.log('Email sent: ' + info.response);
+                    //console.log('Email sent: ' + info.response);
                 }
             });
         
         });
     } catch (error) {
-        console.log(error);
+        //console.log(error);
     }
      
 }
@@ -922,17 +1058,17 @@ const eliminar_producto_admin = async function(req,res){
         
       try {
         const id = req.params['id'];
-        console.log('imprimo el id');
-        console.log(id);
+        //console.log('imprimo el id');
+        //console.log(id);
         const variedad= await Variedad.findOneAndRemove({producto:id});
         const inventario = await Inventario.findOneAndRemove({producto:id});
         const prod_etiqueta = await Producto_etiqueta.findOneAndRemove({producto:id});
         let reg = await Producto.findOneAndRemove({_id:id});
         res.status(200).send({data:reg});
-        console.log(reg);
+        //console.log(reg);
       } catch (error) {
         res.status(500).send({message: error});
-        console.log(error);
+        //console.log(error);
       }      
         
     }else{
@@ -947,8 +1083,8 @@ const obtener_mensajes_admin  = async function(req,res){
             
         let reg = await Contacto.find().sort({createdAt:-1});
 
-        console.log('aqui veo que regresa de contactos');
-        console.log(reg);
+        //console.log('aqui veo que regresa de contactos');
+        //console.log(reg);
         res.status(200).send({data:reg});
 
         
@@ -1016,8 +1152,8 @@ const kpi_ganancias_mensuales_admin  = async function(req,res){
            let current_month = current_date.getMonth()+1;
 
 
-            console.log('aqui reviso el reg de kpi');
-            console.log(reg);
+            //console.log('aqui reviso el reg de kpi');
+            //console.log(reg);
 
 
            for(var item of reg){
@@ -1166,8 +1302,8 @@ const obtener_reviews_producto_admin = async function(req,res){
 
         // //código para mostrar solo las reviws todos los productos
         //   let reviews = await Review.find().populate('cliente').populate('producto').sort({createdAt:-1});
-        //   console.log('aqui obtengo el id del productos que voy a buscar en los reviews')
-        //   console.log(reviews);
+        //   //console.log('aqui obtengo el id del productos que voy a buscar en los reviews')
+        //   //console.log(reviews);
         //   res.status(200).send({data: reviews});
         
 

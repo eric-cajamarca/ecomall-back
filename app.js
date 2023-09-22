@@ -14,7 +14,6 @@ const io = require('socket.io')(server, {
     },
   });
 
-
 io.on('connection',function(socket){
     socket.on('delete-carrito',function(data){
         io.emit('new-carrito',data);
@@ -37,8 +36,9 @@ var categoria_routes = require('./routes/categoria');
 var colaborador_routes = require('./routes/colaborador');
 var clientecrm_routes = require('./routes/clientecrm');
 var descuento_routes = require('./routes/descuento');
+var banner_routes = require('./routes/banner');
 
-// mongoose.connect('mongodb://137.184.189.159:27017/tienda',{useUnifiedTopology: true, useNewUrlParser: true}, (err,res)=>{
+// mongoose.connect('mongodb://127.0.0.1:27017/tienda',{useUnifiedTopology: true, useNewUrlParser: true}, (err,res)=>{
 mongoose.connect('mongodb://127.0.0.1:27017/tienda',{useUnifiedTopology: true, useNewUrlParser: true}, (err,res)=>{
     
     
@@ -59,7 +59,7 @@ app.use(bodyparser.json({limit: '50mb', extended: true}));
 
 
 app.use(cors({
-    origin: ['https://ecomallki.com'],
+    origin: ['https://ecomallki.com','https://admin.ecomallki.com'],
     allowedHeaders: ['Authorization', 'X-API-KEY', 'Origin', 'X-Requested-With', 'Content-Type', 'Access-Control-Allow-Request-Method'],
     methods: ['GET', 'PUT', 'POST', 'DELETE', 'OPTIONS'],
   }));
@@ -79,5 +79,6 @@ app.use('/api',categoria_routes);
 app.use('/api',colaborador_routes);
 app.use('/api',clientecrm_routes);
 app.use('/api',descuento_routes);
+app.use('/api',banner_routes);
 
 module.exports = app;
